@@ -851,7 +851,7 @@ async function mint() {
     
     
         var amountOfTokens = parseInt(document.getElementById("numTokens").innerHTML)
-        console.log(amountOfTokens)
+
     
         const sendOptions = {
             contractAddress: "0xBe03eF3b946Cb4F9EC8Cefd825218016Fdf02C84",
@@ -866,7 +866,7 @@ async function mint() {
     
         const NFTcontract = new ethers.Contract(contractAddress, contractABI, web3Provider);
     
-        console.log(await NFTcontract.name())
+
         try {
             await Moralis.executeFunction(sendOptions)
     
