@@ -733,7 +733,7 @@ async function login() {
     await Moralis.User.logOut();
     await Moralis.User.logOut();
     console.log("logged out");
-    if (typeof window.ethereum !== 'undefined') {
+    if (typeof window.ethereum == 'undefined') {
         var user = await Moralis.Web3.authenticate({
             chainId: 4
         });
