@@ -775,7 +775,7 @@ async function logOut() {
 }
 
 async function mint() {
-    if(connection == "metamask"){
+    if(connection !== "metamask"){
         await Moralis.switchNetwork("0x4")
 
         const readOptions = {
