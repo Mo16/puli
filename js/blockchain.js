@@ -733,7 +733,7 @@ async function login() {
     await Moralis.User.logOut();
     await Moralis.User.logOut();
     console.log("logged out");
-    if (typeof window.ethereum == 'undefined') {
+    if (typeof window.ethereum !== 'undefined') {
         var user = await Moralis.Web3.authenticate({
             chainId: 4
         });
@@ -755,15 +755,17 @@ async function login() {
         connection = "metamask"
     } else {
         console.log("TEST")
-        web3Provider = await Moralis.enableWeb3();
 
 
         var user = await Moralis.Web3.authenticate({
             provider: "walletconnect"
         })
+
+
+
         console.log("TEST2")
 
-        // web3Provider = await Moralis.enableWeb3({provider:"walletconnect"});
+        web3Provider = await Moralis.enableWeb3({provider:"walletconnect"});
         console.log("TEST3")
 
         console.log(user)
