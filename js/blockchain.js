@@ -708,6 +708,8 @@ const contractABI = [{
         "type": "function"
     }
 ]
+
+var web3Provider;
 const contractAddress = '0xBe03eF3b946Cb4F9EC8Cefd825218016Fdf02C84'
 const ethers = Moralis.web3Library
 
@@ -736,6 +738,8 @@ async function login() {
             chainId: 4
         });
         await Moralis.switchNetwork("0x4")
+         web3Provider = await Moralis.enableWeb3();
+
 
         if (user) {
 
@@ -755,6 +759,8 @@ async function login() {
         var user = await Moralis.Web3.authenticate({
             provider: "walletconnect"
         })
+        web3Provider = await Moralis.enableWeb3();
+
 
         if (user) {
 
@@ -803,7 +809,6 @@ async function mint() {
             },
         }
     
-        const web3Provider = await Moralis.enableWeb3();
     
         const NFTcontract = new ethers.Contract(contractAddress, contractABI, web3Provider);
     
@@ -850,7 +855,6 @@ async function mint() {
             },
         }
     
-        const web3Provider = await Moralis.enableWeb3();
     
         const NFTcontract = new ethers.Contract(contractAddress, contractABI, web3Provider);
     
