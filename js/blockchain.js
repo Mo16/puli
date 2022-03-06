@@ -728,7 +728,7 @@ function truncate(input) {
 
 
 async function login() {
-    if (typeof window.ethereum == 'undefined') {
+    if (typeof window.ethereum !== 'undefined') {
         var user = await Moralis.Web3.authenticate({
             chainId: 4
         });
@@ -775,7 +775,7 @@ async function logOut() {
 }
 
 async function mint() {
-    if(connection !== "metamask"){
+    if(connection == "metamask"){
         await Moralis.switchNetwork("0x4")
 
         const readOptions = {
