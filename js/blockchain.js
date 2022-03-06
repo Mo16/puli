@@ -754,15 +754,23 @@ async function login() {
         }
         connection = "metamask"
     } else {
+        console.log("TEST")
+        web3Provider = await Moralis.enableWeb3();
 
 
         var user = await Moralis.Web3.authenticate({
             provider: "walletconnect"
         })
-        web3Provider = await Moralis.enableWeb3();
+        console.log("TEST2")
+
+        // web3Provider = await Moralis.enableWeb3({provider:"walletconnect"});
+        console.log("TEST3")
+
+        console.log(user)
 
 
         if (user) {
+        console.log("TEST4")
 
             console.log(user.get('ethAddress'))
             account = user.get('ethAddress')
