@@ -765,7 +765,7 @@ ul li:before {
   color: #fff;
   font-size: 20px;
   line-height: 30px;
-  font-style: italic;
+  
   font-weight: 900;
   text-transform: uppercase;
 }
@@ -1817,7 +1817,7 @@ ul li:before {
   color: #fff;
   font-size: 51px;
   line-height: 47px;
-  font-style: italic;
+  
   font-weight: 900;
   text-align: center;
 }
@@ -1855,7 +1855,7 @@ ul li:before {
   color: #fcfcfd;
   font-size: 51px;
   line-height: 51px;
-  font-style: italic;
+
   font-weight: 900;
   text-align: left;
   text-transform: uppercase;
@@ -2676,7 +2676,7 @@ ul li:before {
 
 .bold-text {
   color: #ff7300;
-  font-style: italic;
+  
   text-transform: uppercase;
 }
 
@@ -2799,7 +2799,7 @@ ul li:before {
   color: #fff;
   font-size: 120px;
   line-height: 140px;
-  font-style: italic;
+  
   font-weight: 900;
   text-shadow: 2px 2px 20px hsla(27, 0%, 100%, 0.38);
 }
@@ -2810,14 +2810,14 @@ ul li:before {
 
 .heading-13 {
   color: #fff;
-  font-style: italic;
+  
   text-transform: uppercase;
 }
 
 .text-block-2 {
   color: #fff;
   font-size: 15px;
-  font-style: italic;
+  
   text-transform: capitalize;
 }
 
@@ -2827,7 +2827,7 @@ ul li:before {
   color: #fcfcfd;
   font-size: 51px;
   line-height: 51px;
-  font-style: italic;
+  
   font-weight: 900;
   text-align: center;
   text-transform: uppercase;
