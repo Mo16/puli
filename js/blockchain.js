@@ -710,7 +710,7 @@ const contractABI = [{
 ]
 
 var web3Provider;
-const contractAddress = '0xBe03eF3b946Cb4F9EC8Cefd825218016Fdf02C84'
+const CA = '0xBe03eF3b946Cb4F9EC8Cefd825218016Fdf02C84'
 const ethers = Moralis.web3Library
 
 var connection
@@ -738,7 +738,7 @@ async function login() {
             chainId: 4
         });
         await Moralis.switchNetwork("0x4")
-         web3Provider = await Moralis.enableWeb3();
+        web3Provider = await Moralis.enableWeb3();
 
 
         if (user) {
@@ -749,31 +749,20 @@ async function login() {
             document.getElementById("mint").innerHTML = "Mint"
             document.getElementById("mint").onclick = mint
 
-            console.log(truncate(account))
-
         }
         connection = "metamask"
     } else {
-        console.log("TEST")
-
-
         var user = await Moralis.Web3.authenticate({
             provider: "walletconnect"
         })
 
 
-
-        console.log("TEST2")
-
-        web3Provider = await Moralis.enableWeb3({provider:"walletconnect"});
-        console.log("TEST3")
-
-        console.log(user)
+        web3Provider = await Moralis.enableWeb3({
+            provider: "walletconnect"
+        });
 
 
         if (user) {
-        console.log("TEST4")
-
             console.log(user.get('ethAddress'))
             account = user.get('ethAddress')
             document.getElementById("connect").innerHTML = truncate(account)
@@ -783,8 +772,9 @@ async function login() {
             console.log(truncate(account))
 
         }
+    connection = "walletconnect"
+
     }
-    connection =  "walletconnect"
 
 }
 
@@ -794,23 +784,22 @@ async function logOut() {
 }
 
 async function mint() {
-    if(connection == "metamask"){
+    if (connection == "metamask") {
         await Moralis.switchNetwork("0x4")
 
         const readOptions = {
-            contractAddress: "0xBe03eF3b946Cb4F9EC8Cefd825218016Fdf02C84",
+            contractAddress: CA,
             functionName: "cost",
             abi: contractABI
         };
-    
+
         const mintPrice = await Moralis.executeFunction(readOptions);
-    
-    
+
         var amountOfTokens = parseInt(document.getElementById("numTokens").innerHTML)
         console.log(amountOfTokens)
-    
+
         const sendOptions = {
-            contractAddress: "0xBe03eF3b946Cb4F9EC8Cefd825218016Fdf02C84",
+            contractAddress: CA,
             functionName: "mint",
             abi: contractABI,
             msgValue: Moralis.Units.ETH(mintPrice / 10 ** 18 * amountOfTokens),
@@ -818,45 +807,52 @@ async function mint() {
                 _mintAmount: amountOfTokens,
             },
         }
-    
-    
-        const NFTcontract = new ethers.Contract(contractAddress, contractABI, web3Provider);
-    
+
+        const NFTcontract = new ethers.Contract(CA, contractABI, web3Provider);
+
+
         console.log(await NFTcontract.name())
         try {
-            await Moralis.executeFunction(sendOptions)
-    
+
+             transaction = await Moralis.executeFunction(sendOptions)
+            document.getElementById("mint").innerHTML = "Minting..."
+
+             const receipt = await transaction.wait()
+             console.log(receipt)
+            document.getElementById("mint").innerHTML = "Minted!"
+
+
         } catch (err) {
             console.log(err)
             if (err["code"] == "INSUFFICIENT_FUNDS") {
                 alert("INSUFFICIENT FUNDS")
             } else if (err["code"] == 4001) {
                 alert("Metamask Tx closed")
-    
-            } else if (err["code"] == "UNPREDICTABLE_GAS_LIMIT") {
-                alert("Minting too much at time")
+
+            } else{
+                alert(err)
             }
-    
-    
-    
+
+
+
         }
-    }else if (connection == "walletconnect"){
+    } else if (connection == "walletconnect") {
 
 
         const readOptions = {
-            contractAddress: "0xBe03eF3b946Cb4F9EC8Cefd825218016Fdf02C84",
+            contractAddress: CA,
             functionName: "cost",
             abi: contractABI
         };
-    
+
         const mintPrice = await Moralis.executeFunction(readOptions);
-    
-    
+
+
         var amountOfTokens = parseInt(document.getElementById("numTokens").innerHTML)
 
-    
+
         const sendOptions = {
-            contractAddress: "0xBe03eF3b946Cb4F9EC8Cefd825218016Fdf02C84",
+            contractAddress: CA,
             functionName: "mint",
             abi: contractABI,
             msgValue: Moralis.Units.ETH(mintPrice / 10 ** 18 * amountOfTokens),
@@ -864,30 +860,33 @@ async function mint() {
                 _mintAmount: amountOfTokens,
             },
         }
-    
-    
-        const NFTcontract = new ethers.Contract(contractAddress, contractABI, web3Provider);
-    
+
+        const NFTcontract = new ethers.Contract(CA, contractABI, web3Provider);
 
         try {
-            await Moralis.executeFunction(sendOptions)
-    
+            transaction = await Moralis.executeFunction(sendOptions)
+            document.getElementById("mint").innerHTML = "Minting..."
+
+             const receipt = await transaction.wait()
+             console.log(receipt)
+            document.getElementById("mint").innerHTML = "Minted!"
+
         } catch (err) {
             console.log(err)
             if (err["code"] == "INSUFFICIENT_FUNDS") {
                 alert("INSUFFICIENT FUNDS")
             } else if (err["code"] == 4001) {
                 alert("Metamask Tx closed")
-    
-            } else if (err["code"] == "UNPREDICTABLE_GAS_LIMIT") {
-                alert("Minting too much at time")
+
+            } else{
+                alert(err)
             }
-    
-    
-    
+
+
+
         }
     }
-    
+
 
 
 

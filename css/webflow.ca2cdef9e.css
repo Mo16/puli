@@ -24,7 +24,8 @@
   background-image: none;
   background-position: 0px 0px;
   background-size: auto;
-  font-family: Poppins, sans-serif;
+  font-family: 'Montserrat', sans-serif;
+
 }
 
 .home{
@@ -40,7 +41,8 @@
 @import url("https://fonts.googleapis.com/css?family=Poppins:400,400i,700");
 
 .faq body{
-  font-family: "Poppins", sans-serif;
+  font-family: 'Montserrat', sans-serif;
+
 }
 .faq div.c{
   position: relative;
