@@ -2,8 +2,9 @@ var account;
 
 
 var provider = new WalletConnectProvider.default({
+    infuraId: "f4cdcd2b220f42cdbf65ce4d393a4894",
     rpc: {
-      1: "https://rinkeby.infura.io/v3/f4cdcd2b220f42cdbf65ce4d393a4894", // https://ethereumnodes.com/
+      4: "https://rinkeby.infura.io/v3/f4cdcd2b220f42cdbf65ce4d393a4894", // https://ethereumnodes.com/
 
       // ...
 
