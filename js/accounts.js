@@ -1,6 +1,19 @@
 var account;
 
 
+var provider = new WalletConnectProvider.default({
+    rpc: {
+      1: "https://rinkeby.infura.io/v3/f4cdcd2b220f42cdbf65ce4d393a4894", // https://ethereumnodes.com/
+
+      // ...
+
+    },
+
+  });
+
+
+let web3 = new Web3(Web3.givenProvider)
+
 
 
 const contractABI = [{
@@ -713,185 +726,126 @@ const contractABI = [{
     }
 ]
 
-var web3Provider;
 const CA = '0xBe03eF3b946Cb4F9EC8Cefd825218016Fdf02C84'
-const ethers = Moralis.web3Library
-
-var connection
-
-const serverUrl = "https://fv7xa4lgxt9l.usemoralis.com:2053/server";
-const appId = "NgPFJnj28c0WMwSvLXLh4D0lGYsN7Wj2KAcXNASc";
-
-Moralis.start({
-    serverUrl,
-    appId
-});
 
 function truncate(input) {
     return `${input.slice(0, 3)}..${input.slice(-3)}`
 }
 
+let chainId = 4;
+
+async function changeChain() {
+    await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{
+            chainId: Web3.utils.toHex(chainId)
+        }],
+    });
+}
 
 
+function changeDoc(account) {
+
+    document.getElementById("connect").innerHTML = truncate(account)
+    document.getElementById("mint").innerHTML = "Mint"
+    document.getElementById("mint").onclick = mint
+}
 async function login() {
-    await Moralis.User.logOut();
-    await Moralis.User.logOut();
-    console.log("logged out");
-    if (typeof window.ethereum !== 'undefined') {
-        var user = await Moralis.Web3.authenticate({
-            chainId: 4
-        });
-        await Moralis.switchNetwork("0x4")
-        web3Provider = await Moralis.enableWeb3();
 
+    // changeChain()
 
-        if (user) {
+    if (typeof window.ethereum == 'undefined') {
+        console.log("META")
 
-            console.log(user.get('ethAddress'))
-            account = user.get('ethAddress')
-            document.getElementById("connect").innerHTML = truncate(account)
-            document.getElementById("mint").innerHTML = "Mint"
-            document.getElementById("mint").onclick = mint
+        try {
+            const accounts = await ethereum.request({
+                method: 'eth_requestAccounts'
+            });
+            const account = accounts[0];
+
+            console.log(accounts)
+            changeDoc(account)
+        } catch (error) {
+            console.log(error)
 
         }
-        connection = "metamask"
-    } else {
-        var user = await Moralis.Web3.authenticate({
-            provider: "walletconnect"
-        })
+    }else{
+        console.log("WC")
+        await provider.enable();
 
-
-        web3Provider = await Moralis.enableWeb3({
-            provider: "walletconnect"
-        });
-
-
-        if (user) {
-            console.log(user.get('ethAddress'))
-            account = user.get('ethAddress')
-            document.getElementById("connect").innerHTML = truncate(account)
-            document.getElementById("mint").innerHTML = "Mint"
-            document.getElementById("mint").onclick = mint
-
-            console.log(truncate(account))
-
-        }
-    connection = "walletconnect"
-
+        //  Create Web3 instance
+        const web3 = new Web3(provider);
+        window.w3 = web3
+  
+        var accounts  = await web3.eth.getAccounts(); // get all connected accounts
+        account = accounts[0]; // get the primary account
     }
-
 }
 
-async function logOut() {
-    await Moralis.User.logOut();
-    console.log("logged out");
-}
+(async function () {
+
+    // if (window.ethereum) {
+    //     try {
+    //         const addressArray = await window.ethereum.request({
+    //             method: "eth_accounts",
+    //         });
+    //         if (addressArray.length > 0) {
+    //             account = addressArray[0]
+    //             console.log("Connected account :", addressArray)
+
+
+    //         }
+    //     } catch (err) {
+    //         //
+    //     }
+    // }
+
+
+    // changeDoc(account)
+
+}());
+
+
+
+
+
+window.ethereum.on('accountsChanged', function (accounts) {
+
+
+    account = accounts[0];
+    console.log(accounts)
+
+
+
+    changeDoc(account)
+
+
+})
+
+window.ethereum.on('networkChanged', function (networkId) {
+    changeChain()
+
+})
+
+window.ethereum.on('disconnect', function (networkId) {
+    document.getElementById("connect").innerHTML = "Connect Wallet"
+
+
+    document.getElementById("mint").innerHTML = "Connect Wallet"
+    document.getElementById("mint").onclick = login
+})
+
 
 async function mint() {
-    if (connection == "metamask") {
-        await Moralis.switchNetwork("0x4")
 
-        const readOptions = {
-            contractAddress: CA,
-            functionName: "cost",
-            abi: contractABI
-        };
-
-        const mintPrice = await Moralis.executeFunction(readOptions);
-
-        var amountOfTokens = parseInt(document.getElementById("numTokens").innerHTML)
-        console.log(amountOfTokens)
-
-        const sendOptions = {
-            contractAddress: CA,
-            functionName: "mint",
-            abi: contractABI,
-            msgValue: Moralis.Units.ETH(mintPrice / 10 ** 18 * amountOfTokens),
-            params: {
-                _mintAmount: amountOfTokens,
-            },
-        }
-
-        const NFTcontract = new ethers.Contract(CA, contractABI, web3Provider);
-
-
-        console.log(await NFTcontract.name())
-        try {
-
-             transaction = await Moralis.executeFunction(sendOptions)
-            document.getElementById("mint").innerHTML = "Minting..."
-
-             const receipt = await transaction.wait()
-             console.log(receipt)
-            document.getElementById("mint").innerHTML = "Minted!"
-
-
-        } catch (err) {
-            console.log(err)
-            if (err["code"] == "INSUFFICIENT_FUNDS") {
-                alert("INSUFFICIENT FUNDS")
-            } else if (err["code"] == 4001) {
-                alert("Metamask Tx closed")
-
-            } else{
-                alert(err)
-            }
-
-
-
-        }
-    } else if (connection == "walletconnect") {
-
-
-        const readOptions = {
-            contractAddress: CA,
-            functionName: "cost",
-            abi: contractABI
-        };
-
-        const mintPrice = await Moralis.executeFunction(readOptions);
-
-
-        var amountOfTokens = parseInt(document.getElementById("numTokens").innerHTML)
-
-
-        const sendOptions = {
-            contractAddress: CA,
-            functionName: "mint",
-            abi: contractABI,
-            msgValue: Moralis.Units.ETH(mintPrice / 10 ** 18 * amountOfTokens),
-            params: {
-                _mintAmount: amountOfTokens,
-            },
-        }
-
-        const NFTcontract = new ethers.Contract(CA, contractABI, web3Provider);
-
-        try {
-            transaction = await Moralis.executeFunction(sendOptions)
-            document.getElementById("mint").innerHTML = "Minting..."
-
-             const receipt = await transaction.wait()
-             console.log(receipt)
-            document.getElementById("mint").innerHTML = "Minted!"
-
-        } catch (err) {
-            console.log(err)
-            if (err["code"] == "INSUFFICIENT_FUNDS") {
-                alert("INSUFFICIENT FUNDS")
-            } else if (err["code"] == 4001) {
-                alert("Metamask Tx closed")
-
-            } else{
-                alert(err)
-            }
-
-
-
-        }
-    }
-
-
-
+    changeChain()
+    var amountOfTokens = parseInt(document.getElementById("numTokens").innerHTML)
+    contract = new web3.eth.Contract(contractABI, CA)
+    mintPrice = await contract.methods.cost().call()
+    document.getElementById("mint").innerHTML = "Minting..."
+    mint = await contract.methods.mint(amountOfTokens).send({
+        from: account,
+        value: mintPrice * amountOfTokens
+    })
 
 }
